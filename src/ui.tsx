@@ -24,3 +24,16 @@ export function Slider(props: {
     </label>
   )
 }
+
+/** Light / Dark switch for previewing the system in either mode. */
+export function ThemeSwitch({ value, onChange }: { value: 'light' | 'dark'; onChange: (t: 'light' | 'dark') => void }) {
+  return (
+    <div className="theme-switch" role="group" aria-label="Preview mode">
+      {(['light', 'dark'] as const).map((t) => (
+        <button key={t} type="button" aria-pressed={value === t} onClick={() => onChange(t)}>
+          {t === 'light' ? 'Light' : 'Dark'}
+        </button>
+      ))}
+    </div>
+  )
+}

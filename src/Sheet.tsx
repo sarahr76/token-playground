@@ -11,7 +11,8 @@ import {
   type ColorToken,
   type System,
 } from './tokens'
-import { Slider } from './ui'
+import type { Theme } from './tokens'
+import { Slider, ThemeSwitch } from './ui'
 
 const MAX_COLORS = 5
 const wide = () => window.matchMedia('(min-width: 900px)').matches
@@ -26,6 +27,7 @@ type Props = {
 export default function Sheet({ sys, setSys, onShare, onReset }: Props) {
   const [editingId, setEditingId] = useState<string | null>(() => (wide() ? 'brand' : null))
   const [exportOpen, setExportOpen] = useState(false)
+  const [theme, setTheme] = useState<Theme>('light')
 
   const update = (patch: Partial<System>) => setSys((s) => ({ ...s, ...patch }))
   const updateColor = (id: string, patch: Partial<ColorToken>) =>
@@ -224,8 +226,11 @@ export default function Sheet({ sys, setSys, onShare, onReset }: Props) {
         </section>
 
         <section className="col-wide">
-          <h2 className="tag tag-green">See it in use</h2>
-          <SampleCard sys={sys} />
+          <div className="theme-head">
+            <h2 className="tag tag-green">See it in use</h2>
+            <ThemeSwitch value={theme} onChange={setTheme} />
+          </div>
+          <SampleCard sys={sys} theme={theme} />
         </section>
       </div>
 

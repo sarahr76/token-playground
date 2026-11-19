@@ -1,18 +1,20 @@
 import type { CSSProperties } from 'react'
 import { ramp } from './color'
-import { typeSize, type System } from './tokens'
+import { themeTokens, typeSize, type System, type Theme } from './tokens'
 
 /** The user's own system, exposed as CSS variables for the sample card only. */
-function sampleVars(sys: System): CSSProperties {
+function sampleVars(sys: System, theme: Theme): CSSProperties {
+  const t = Object.fromEntries(themeTokens(sys, theme))
   const brand = ramp(sys.colors[0].base)
-  const neutral = ramp((sys.colors.find((c) => c.id === 'neutral') ?? sys.colors[0]).base)
   return {
-    '--s-brand': brand[500],
-    '--s-brand-soft': brand[100],
-    '--s-brand-deep': brand[700],
-    '--s-text': neutral[900],
-    '--s-muted': neutral[700],
-    '--s-line': neutral[300],
+    '--s-surface': t['color-surface'],
+    '--s-brand': t['color-action'],
+    '--s-brand-soft': t['color-action-soft'],
+    '--s-brand-deep': theme === 'light' ? brand[700] : brand[100],
+    '--s-on-brand': t['color-on-action'],
+    '--s-text': t['color-text'],
+    '--s-muted': t['color-text-muted'],
+    '--s-line': t['color-line'],
     '--s-radius': `${sys.radius}px`,
     '--s-space': `${sys.space}px`,
     '--s-heading': `"${sys.headingFont}", sans-serif`,
@@ -20,9 +22,9 @@ function sampleVars(sys: System): CSSProperties {
   } as CSSProperties
 }
 
-export function SampleCard({ sys, compact = false }: { sys: System; compact?: boolean }) {
+export function SampleCard({ sys, compact = false, theme = 'light' }: { sys: System; compact?: boolean; theme?: Theme }) {
   return (
-    <div className={`card sample${compact ? ' sample-compact' : ''}`} style={sampleVars(sys)}>
+    <div className={`card sample${compact ? ' sample-compact' : ''}`} style={sampleVars(sys, theme)}>
       <span className="s-badge">Badge</span>
       <span className="s-heading" style={{ fontSize: typeSize(sys.scale, 2) }}>
         Card heading

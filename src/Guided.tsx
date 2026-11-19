@@ -21,7 +21,8 @@ import {
   type Mood,
 } from './guided'
 import { SampleCard } from './Sample'
-import { BODY_FONTS, HEADING_FONTS, type System } from './tokens'
+import { ThemeSwitch } from './ui'
+import { BODY_FONTS, HEADING_FONTS, type System, type Theme } from './tokens'
 
 const STEP_NAMES = ['Start', 'Color', 'Type', 'Space and corners', 'Export'] as const
 type Step = 1 | 2 | 3 | 4 | 5
@@ -74,6 +75,7 @@ export default function Guided({ sys, setSys, onBuild, onFinish, onShare }: Prop
   const [imageNote, setImageNote] = useState('')
   const [ownFonts, setOwnFonts] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [theme, setTheme] = useState<Theme>('light')
   const headingRef = useRef<HTMLHeadingElement>(null)
   const firstRender = useRef(true)
 
@@ -496,9 +498,12 @@ export default function Guided({ sys, setSys, onBuild, onFinish, onShare }: Prop
             <span className="preview-toggle-action">{previewOpen ? 'Hide' : 'Preview'}</span>
           </button>
           <div id="g-preview" className="preview-body">
-            <h2 className="tag tag-blue">Your system so far</h2>
+            <div className="theme-head">
+              <h2 className="tag tag-blue">Your system so far</h2>
+              <ThemeSwitch value={theme} onChange={setTheme} />
+            </div>
             <div className="card card-raised">
-              <SampleCard sys={sys} compact />
+              <SampleCard sys={sys} compact theme={theme} />
               <ul className="status-list">
                 {([['Color', 2], ['Type', 3], ['Space and corners', 4]] as const).map(([label, own]) => (
                   <li key={label}>

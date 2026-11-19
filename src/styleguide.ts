@@ -15,8 +15,6 @@ const esc = (s: string) =>
 const textOn = (hex: string) => (contrast(hex, '#ffffff') >= contrast(hex, '#111111') ? '#ffffff' : '#111111')
 
 export function toStyleGuide(sys: System): string {
-  const neutral = ramp((sys.colors.find((c) => c.id === 'neutral') ?? sys.colors[0]).base)
-  const brand = ramp(sys.colors[0].base)
   const fonts = fontsUrl([sys.headingFont, sys.bodyFont])
   const name = esc(sys.name || 'Untitled system')
 
@@ -64,33 +62,35 @@ ${fonts ? `<link rel="stylesheet" href="${fonts}">` : ''}
 <style>
 ${toCss(sys)}
 * { box-sizing: border-box; }
-body { margin: 0; padding: 48px 24px 96px; background: ${neutral[100]}; color: ${neutral[900]}; font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+body { margin: 0; padding: 48px 24px 96px; background: var(--color-surface); color: var(--color-text); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
 main { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
 h1, h2, h3 { font-family: var(--font-heading); margin: 0; line-height: 1.15; }
 h1 { font-size: var(--text-display); }
-h2 { font-size: var(--text-title); padding-bottom: 8px; border-bottom: 2px solid ${neutral[300]}; }
+h2 { font-size: var(--text-title); padding-bottom: 8px; border-bottom: 2px solid var(--color-line); }
 h3 { font-size: var(--text-body); margin-bottom: 8px; }
 section { display: flex; flex-direction: column; gap: 20px; }
-.muted { color: ${neutral[700]}; font-size: 14px; }
+.muted { color: var(--color-text-muted); font-size: 14px; }
 .chips { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .chip { min-height: 110px; padding: 10px; border-radius: var(--radius); display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; font-size: 13px; }
 .ramp { display: flex; flex-direction: column; }
-.type-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid ${neutral[300]}; }
+.type-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--color-line); }
 .spaces { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 .space-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.space-block { background: ${brand[500]}; }
-.radius-demo { width: 120px; height: 72px; background: ${brand[500]}; border-radius: var(--radius); }
-.sample { background: #fff; border: 1px solid ${neutral[300]}; border-radius: var(--radius); padding: calc(var(--space-1) * 6); display: flex; flex-direction: column; gap: calc(var(--space-1) * 3); }
-.sample p { margin: 0; color: ${neutral[700]}; max-width: 52ch; }
+.space-block { background: var(--color-action); }
+.radius-demo { width: 120px; height: 72px; background: var(--color-action); border-radius: var(--radius); }
+.sample { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius); padding: calc(var(--space-1) * 6); display: flex; flex-direction: column; gap: calc(var(--space-1) * 3); }
+.sample p { margin: 0; color: var(--color-text-muted); max-width: 52ch; }
 .btns { display: flex; flex-wrap: wrap; gap: calc(var(--space-1) * 3); }
 button { min-height: 44px; padding: 0 calc(var(--space-1) * 5); border-radius: var(--radius); font: inherit; font-weight: 600; cursor: pointer; }
-.primary { border: 0; background: ${brand[500]}; color: #fff; }
-.secondary { border: 1px solid ${brand[500]}; background: #fff; color: ${brand[500]}; }
-footer { color: ${neutral[700]}; font-size: 14px; }
+.primary { border: 0; background: var(--color-action); color: var(--color-on-action); }
+.secondary { border: 1px solid var(--color-action); background: transparent; color: var(--color-action); }
+.mode { position: absolute; top: 16px; right: 16px; min-height: 36px; border: 1px solid var(--color-line); background: transparent; color: var(--color-text); }
+footer { color: var(--color-text-muted); font-size: 14px; }
 @media (max-width: 640px) { .chips { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; } .chip span { display: none; } }
 </style>
 </head>
 <body>
+<button class="mode" id="mode" type="button">Dark mode</button>
 <main>
   <header>
     <p class="muted">Style guide</p>
@@ -124,6 +124,12 @@ footer { color: ${neutral[700]}; font-size: 14px; }
 
   <footer>Made with Token Playground</footer>
 </main>
+<script>
+var b=document.getElementById('mode'),r=document.documentElement;
+function set(t){r.setAttribute('data-theme',t);b.textContent=t==='dark'?'Light mode':'Dark mode'}
+set(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+b.onclick=function(){set(r.getAttribute('data-theme')==='dark'?'light':'dark')};
+</script>
 </body>
 </html>
 `

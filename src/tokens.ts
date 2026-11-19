@@ -79,18 +79,46 @@ export function flatTokens(sys: System): [string, string][] {
   return out
 }
 
+export type Theme = 'light' | 'dark'
+
+/** Role-based colors for light and dark. Dark flips the neutral ramp and lifts the brand shade. */
+export function themeTokens(sys: System, theme: Theme): [string, string][] {
+  const brand = ramp(sys.colors[0].base)
+  const neutral = ramp((sys.colors.find((c) => c.id === 'neutral') ?? sys.colors[0]).base)
+  const light = theme === 'light'
+  return [
+    ['color-surface', light ? '#ffffff' : neutral[900]],
+    ['color-text', light ? neutral[900] : neutral[100]],
+    ['color-text-muted', light ? neutral[700] : neutral[300]],
+    ['color-line', light ? neutral[300] : neutral[700]],
+    ['color-action', light ? brand[500] : brand[300]],
+    ['color-action-soft', light ? brand[100] : brand[900]],
+    ['color-on-action', light ? '#ffffff' : neutral[900]],
+  ]
+}
+
+const block = (selector: string, pairs: [string, string][], indent = '') =>
+  `${indent}${selector} {\n${pairs.map(([k, v]) => `${indent}  --${k}: ${v};`).join('\n')}\n${indent}}\n`
+
+/** Dark values, applied by a data-theme attribute or, when none is set, the visitor's system setting. */
+const darkCss = (sys: System) =>
+  `\n${block('[data-theme="dark"]', themeTokens(sys, 'dark'))}\n@media (prefers-color-scheme: dark) {\n${block(':root:not([data-theme="light"])', themeTokens(sys, 'dark'), '  ')}}\n`
+
 export function toCss(sys: System): string {
-  const lines = flatTokens(sys).map(([k, v]) => `  --${k}: ${v};`)
-  return `:root {\n${lines.join('\n')}\n}\n`
+  return block(':root', [...flatTokens(sys), ...themeTokens(sys, 'light')]) + darkCss(sys)
 }
 
 export function toTailwind(sys: System): string {
-  const lines = flatTokens(sys).map(([k, v]) => {
+  const lines = [...flatTokens(sys), ...themeTokens(sys, 'light')].map(([k, v]) => {
     // Tailwind v4 theme namespaces: --color-*, --font-*, --text-*, --radius-*, --spacing-*
     const name = k === 'radius' ? 'radius-base' : k.replace(/^space-/, 'spacing-')
     return `  --${name}: ${v};`
   })
-  return `@import "tailwindcss";\n\n@theme {\n${lines.join('\n')}\n}\n`
+  return (
+    `@import "tailwindcss";\n\n@theme {\n${lines.join('\n')}\n}\n` +
+    `\n/* Use dark: variants with a data-theme="dark" attribute */\n@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));\n` +
+    darkCss(sys)
+  )
 }
 
 export function toJson(sys: System): string {
@@ -101,8 +129,13 @@ export function toJson(sys: System): string {
       STEPS.map((s) => [String(s), { $value: shades[s], $type: 'color' }]),
     )
   }
+  const themeJson = (t: Theme) =>
+    Object.fromEntries(
+      themeTokens(sys, t).map(([k, v]) => [k.replace(/^color-/, ''), { $value: v, $type: 'color' }]),
+    )
   const tokens = {
     color,
+    theme: { light: themeJson('light'), dark: themeJson('dark') },
     font: {
       heading: { $value: sys.headingFont, $type: 'fontFamily' },
       body: { $value: sys.bodyFont, $type: 'fontFamily' },

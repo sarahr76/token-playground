@@ -400,6 +400,7 @@ select {
   padding: calc(var(--s-space) * 6);
   gap: calc(var(--s-space) * 3);
   font-family: var(--s-body);
+  background: var(--s-surface, #ffffff);
   color: var(--s-text);
   font-size: 16px;
 }
@@ -442,11 +443,11 @@ select {
 .s-btn-primary {
   border: 0;
   background: var(--s-brand);
-  color: #ffffff;
+  color: var(--s-on-brand);
 }
 .s-btn-secondary {
   border: 1px solid var(--s-brand);
-  background: #ffffff;
+  background: transparent;
   color: var(--s-brand);
 }
 .s-field {
@@ -459,6 +460,8 @@ select {
   padding: 0 12px;
   border: 1px solid var(--s-line);
   border-radius: var(--s-radius);
+  background: var(--s-surface);
+  color: var(--s-text);
 }
 
 /* ---------- Export dialog ---------- */
@@ -1113,4 +1116,37 @@ select {
   .toast {
     bottom: 96px;
   }
+}
+
+/* ---------- Light / dark preview switch ---------- */
+
+.theme-switch {
+  display: inline-flex;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #ffffff;
+  padding: 2px;
+  gap: 2px;
+}
+.theme-switch button {
+  min-height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.theme-switch button[aria-pressed='true'] {
+  background: var(--ink);
+  color: #ffffff;
+}
+.theme-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }

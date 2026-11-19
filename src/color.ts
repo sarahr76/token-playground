@@ -38,6 +38,11 @@ export function rgbToOklch({ r, g, b }: Rgb): Oklch {
   return { l: L, c: Math.hypot(a, bb), h: (h + 360) % 360 }
 }
 
+/** Convert an sRGB pixel (0..255 per channel) to OKLCH. */
+export function rgb255ToOklch(r: number, g: number, b: number): Oklch {
+  return rgbToOklch({ r: toLinear(r / 255), g: toLinear(g / 255), b: toLinear(b / 255) })
+}
+
 function oklchToRgbRaw({ l, c, h }: Oklch): Rgb {
   const a = c * Math.cos((h * Math.PI) / 180)
   const b = c * Math.sin((h * Math.PI) / 180)

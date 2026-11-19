@@ -58,7 +58,7 @@ export const typeSize = (scale: number, power: number) => Math.round(16 * scale 
 
 export const SPACE_MULTIPLES = [1, 2, 4, 6, 8, 12]
 
-const slug = (s: string) =>
+export const slug = (s: string) =>
   s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
@@ -124,38 +124,58 @@ export function toJson(sys: System): string {
   return JSON.stringify(tokens, null, 2) + '\n'
 }
 
-// --- Saving: the browser remembers your system, and a share link carries it in the URL. ---
+// --- Loading and saving. A share link carries the whole system in the URL, so anything read
+// from it (or from storage) is treated as untrusted and rebuilt field by field. ---
 
 const KEY = 'token-playground:system'
 
-function isSystem(v: unknown): v is System {
-  const s = v as System
-  return (
-    !!s &&
-    typeof s.name === 'string' &&
-    Array.isArray(s.colors) &&
-    s.colors.length > 0 &&
-    s.colors.every(
-      (c) =>
-        typeof c.id === 'string' &&
-        typeof c.name === 'string' &&
-        [c.base?.l, c.base?.c, c.base?.h].every((n) => typeof n === 'number' && isFinite(n)),
-    ) &&
-    typeof s.headingFont === 'string' &&
-    typeof s.bodyFont === 'string' &&
-    [s.scale, s.radius, s.space].every((n) => typeof n === 'number' && isFinite(n))
-  )
+const inRange = (n: unknown, min: number, max: number): n is number =>
+  typeof n === 'number' && Number.isFinite(n) && n >= min && n <= max
+
+function sanitize(v: unknown): System | null {
+  if (!v || typeof v !== 'object') return null
+  const s = v as Record<string, unknown>
+  if (typeof s.name !== 'string' || s.name.length > 60) return null
+  if (!Array.isArray(s.colors) || s.colors.length < 1 || s.colors.length > 8) return null
+
+  const colors: ColorToken[] = []
+  const ids = new Set<string>()
+  for (const raw of s.colors) {
+    if (!raw || typeof raw !== 'object') return null
+    const c = raw as Record<string, unknown>
+    const b = c.base as Record<string, unknown> | undefined
+    if (typeof c.id !== 'string' || !c.id || c.id.length > 40 || ids.has(c.id)) return null
+    if (typeof c.name !== 'string' || c.name.length > 40) return null
+    if (!b || !inRange(b.l, 0, 1) || !inRange(b.c, 0, 0.4) || !inRange(b.h, 0, 360)) return null
+    ids.add(c.id)
+    colors.push({ id: c.id, name: c.name, base: { l: b.l, c: b.c, h: b.h } })
+  }
+
+  if (typeof s.headingFont !== 'string' || !Object.hasOwn(HEADING_FONTS, s.headingFont)) return null
+  if (typeof s.bodyFont !== 'string' || !Object.hasOwn(BODY_FONTS, s.bodyFont)) return null
+  if (!inRange(s.scale, 1.05, 1.6) || !inRange(s.radius, 0, 32) || !inRange(s.space, 1, 10)) {
+    return null
+  }
+  return {
+    name: s.name,
+    colors,
+    headingFont: s.headingFont,
+    bodyFont: s.bodyFont,
+    scale: s.scale,
+    radius: s.radius,
+    space: s.space,
+  }
 }
 
-export const encodeShare = (sys: System) =>
-  btoa(encodeURIComponent(JSON.stringify(sys)))
+export const encodeShare = (sys: System) => btoa(encodeURIComponent(JSON.stringify(sys)))
 
-export function loadSystem(): System {
+export type Loaded = { system: System; source: 'link' | 'saved' | 'none' }
+
+export function loadSystem(): Loaded {
   try {
-    const hash = location.hash.replace(/^#s=/, '')
-    if (location.hash.startsWith('#s=') && hash) {
-      const parsed: unknown = JSON.parse(decodeURIComponent(atob(hash)))
-      if (isSystem(parsed)) return parsed
+    if (location.hash.startsWith('#s=')) {
+      const parsed = sanitize(JSON.parse(decodeURIComponent(atob(location.hash.slice(3)))))
+      if (parsed) return { system: parsed, source: 'link' }
     }
   } catch {
     // A broken share link falls through to the saved or default system.
@@ -163,13 +183,13 @@ export function loadSystem(): System {
   try {
     const raw = localStorage.getItem(KEY)
     if (raw) {
-      const parsed: unknown = JSON.parse(raw)
-      if (isSystem(parsed)) return parsed
+      const parsed = sanitize(JSON.parse(raw))
+      if (parsed) return { system: parsed, source: 'saved' }
     }
   } catch {
     // Storage can be unavailable (private mode); start fresh.
   }
-  return DEFAULT_SYSTEM
+  return { system: DEFAULT_SYSTEM, source: 'none' }
 }
 
 export function saveSystem(sys: System) {
@@ -177,5 +197,13 @@ export function saveSystem(sys: System) {
     localStorage.setItem(KEY, JSON.stringify(sys))
   } catch {
     // Not being able to save is not fatal.
+  }
+}
+
+export function clearSystem() {
+  try {
+    localStorage.removeItem(KEY)
+  } catch {
+    // Nothing to clear if storage is unavailable.
   }
 }

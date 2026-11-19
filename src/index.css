@@ -1,0 +1,634 @@
+/* Token Playground: "Paint chips" app style.
+   The app's own look lives here. The user's system only appears inside .sample. */
+
+:root {
+  --ground: #e4f5ec;
+  --ink: #16302b;
+  --muted: #3d5a54;
+  --paper: #ffffff;
+  --yellow: #ffd23f;
+  --pink: #ff9ec4;
+  --blue: #7cc4ff;
+  --green: #5fd39a;
+  --display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --text: 'DM Sans', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 13px;
+}
+
+/* ---------- Layout ---------- */
+
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 36px 48px 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.top,
+.top-left,
+.top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 14px;
+}
+.top {
+  justify-content: space-between;
+}
+
+.brand-name {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+}
+
+.name-input {
+  min-height: 44px;
+  width: 190px;
+  padding: 0 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font-weight: 500;
+}
+
+.hint {
+  color: var(--muted);
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+.col-narrow {
+  flex: 1 1 340px;
+}
+.col-wide {
+  flex: 2 1 520px;
+}
+.col-narrow,
+.col-wide {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---------- Shared pieces ---------- */
+
+.tag {
+  margin: 0;
+  align-self: flex-start;
+  padding: 6px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 800;
+}
+.tag-pink {
+  background: var(--pink);
+}
+.tag-blue {
+  background: var(--blue);
+}
+.tag-yellow {
+  background: var(--yellow);
+}
+.tag-green {
+  background: var(--green);
+}
+
+.card {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.card-raised {
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.btn {
+  min-height: 48px;
+  padding: 0 20px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--yellow);
+}
+.btn-primary {
+  background: var(--ink);
+  color: #ffffff;
+  box-shadow: 4px 4px 0 var(--yellow);
+}
+.btn-primary:hover {
+  background: #0a1a17;
+}
+.btn-dashed {
+  border-style: dashed;
+  border-radius: 16px;
+  background: transparent;
+}
+
+.pill {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.pill-yellow {
+  background: var(--yellow);
+}
+.pill-green {
+  background: var(--green);
+}
+.pill-pink {
+  background: var(--pink);
+}
+
+.field {
+  flex: 1 1 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+}
+.field select,
+.field input {
+  min-height: 44px;
+  width: 100%;
+  padding: 0 12px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--paper);
+  font-weight: 700;
+}
+.field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-weight: 500;
+}
+.slider-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.slider input {
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+/* ---------- Type ---------- */
+
+.aa {
+  font-weight: 700;
+  font-size: 140px;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+.ladder {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 2px solid var(--ink);
+  padding-top: 16px;
+}
+.ladder-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* ---------- Color ---------- */
+
+.ramp {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ramp-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 30px;
+}
+.ramp-name {
+  font-weight: 700;
+}
+
+.chips {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+.chip {
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--paper);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+.chip:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.chip-active {
+  background: var(--yellow);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+.chip-color {
+  height: 84px;
+  border-bottom: 2px solid var(--ink);
+}
+.chip-label {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mix {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 28px;
+}
+.mix-col {
+  flex: 1 1 240px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mix-col .field {
+  flex: 0 0 auto;
+}
+.mix-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+}
+.mix-name {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 8px;
+  border: 2px solid transparent;
+  border-bottom-color: var(--ink);
+  background: transparent;
+  font-weight: 800;
+}
+.mix-sub {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 20px;
+}
+.check {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.mix-actions {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.mix p {
+  margin: 0;
+}
+.grabber,
+.mix-done {
+  display: none;
+}
+
+/* ---------- Space ---------- */
+
+.ruler {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  min-height: 120px;
+  overflow: hidden;
+}
+.ruler-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.ruler-block {
+  background: var(--ink);
+}
+
+/* ---------- See it in use: styled only by the user's own tokens ---------- */
+
+.sample {
+  padding: calc(var(--s-space) * 6);
+  gap: calc(var(--s-space) * 3);
+  font-family: var(--s-body);
+  color: var(--s-text);
+  font-size: 16px;
+}
+.s-badge {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--s-brand-soft);
+  color: var(--s-brand-deep);
+  font-size: 12px;
+  font-weight: 600;
+}
+.s-heading {
+  font-family: var(--s-heading);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.s-body {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--s-muted);
+  line-height: 1.5;
+}
+.s-body a {
+  color: var(--s-brand);
+}
+.s-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--s-space) * 3);
+}
+.s-btn {
+  min-height: 44px;
+  padding: 0 calc(var(--s-space) * 5);
+  border-radius: var(--s-radius);
+  font-weight: 600;
+  cursor: pointer;
+}
+.s-btn-primary {
+  border: 0;
+  background: var(--s-brand);
+  color: #ffffff;
+}
+.s-btn-secondary {
+  border: 1px solid var(--s-brand);
+  background: #ffffff;
+  color: var(--s-brand);
+}
+.s-field {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--s-space) * 2);
+}
+.s-field input {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+}
+
+/* ---------- Export dialog ---------- */
+
+.dialog {
+  width: min(680px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 24px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 8px 8px 0 var(--ink);
+}
+.dialog[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.dialog::backdrop {
+  background: rgb(22 48 43 / 0.55);
+}
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dialog-head h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+}
+.tabs,
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tab {
+  min-height: 44px;
+  font-weight: 500;
+}
+.tab-active {
+  background: var(--yellow);
+  font-weight: 700;
+}
+.code {
+  margin: 0;
+  flex: 1 1 auto;
+  min-height: 160px;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--ink);
+  color: var(--ground);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow: auto;
+}
+
+.toast {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 30;
+}
+.toast span {
+  padding: 10px 18px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--yellow);
+  font-weight: 700;
+}
+
+/* ---------- Phone ---------- */
+
+@media (max-width: 899px) {
+  .page {
+    padding: 24px 20px 56px;
+    gap: 28px;
+  }
+  .brand-name {
+    font-size: 20px;
+  }
+  .name-input {
+    flex: 1 1 160px;
+  }
+  .hint {
+    flex-basis: 100%;
+    font-size: 14px;
+  }
+  .top-actions {
+    width: 100%;
+  }
+  .top-actions .btn {
+    flex: 1 1 auto;
+    padding: 0 14px;
+  }
+  .aa {
+    font-size: 110px;
+  }
+  .chips {
+    gap: 8px;
+  }
+  .chip {
+    border-radius: 14px;
+  }
+  .chip-color {
+    height: 64px;
+  }
+  .chip-label {
+    padding: 6px 4px;
+    align-items: center;
+  }
+  .hex {
+    display: none;
+  }
+  .s-field {
+    flex: 1 1 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Editing a color slides up as a bottom sheet so the sheet stays visible above. */
+  .mix {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    max-height: 72dvh;
+    overflow-y: auto;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 16px;
+    padding: 12px 20px 24px;
+    border-width: 2px 0 0;
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -6px 0 rgb(22 48 43 / 0.15);
+  }
+  .mix-col {
+    flex: 0 0 auto;
+  }
+  .grabber {
+    display: block;
+    align-self: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--ink);
+  }
+  .mix-done {
+    display: block;
+    flex: 1;
+  }
+  .slider input {
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .chip {
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+}
